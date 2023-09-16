@@ -1,0 +1,4 @@
+.pytorch_pretrained_bert
+*.txt
+*.index
+wandb/
