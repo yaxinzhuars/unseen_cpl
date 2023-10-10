@@ -5,7 +5,7 @@ export MOOC='../mooc17/ML/'
 
 # PYTHONPATH=../ CUDA_VISIBLE_DEVICES=0 python bert_pointwise.py \
 # --task_name mooc \
-# --do_eval \
+# --do_train \
 # --do_lower_case \
 # --data_dir ../datasets/wiki_dpr/ \
 # --bert_model bert-base-cased \
@@ -13,12 +13,29 @@ export MOOC='../mooc17/ML/'
 # --train_batch_size 8 \
 # --learning_rate 5e-5 \
 # --num_train_epochs 10.0 \
-# --output_dir /gypsum/scratch1/yaxinzhu/bert_output/uc_48/ \
+# --output_dir /gypsum/scratch1/yaxinzhu/bert_output/uc_unseen/ \
 # --old_output_dir /gypsum/scratch1/yaxinzhu/bert_output/lb_unseen_256/ \
 # --data_prefix 'uc' \
-# --data_postfix '1' \
+# --data_postfix 'unseen' \
 # --retrieval_augmentation  \
 # --training_data output_uc_0.txt
+
+PYTHONPATH=../ CUDA_VISIBLE_DEVICES=0 python bert_pointwise.py \
+--task_name mooc \
+--do_eval \
+--do_lower_case \
+--data_dir ../datasets/wiki_dpr/ \
+--bert_model bert-base-cased \
+--max_seq_length 48 \
+--train_batch_size 8 \
+--learning_rate 5e-5 \
+--num_train_epochs 10.0 \
+--output_dir /gypsum/scratch1/yaxinzhu/bert_output/uc_unseen/ \
+--old_output_dir /gypsum/scratch1/yaxinzhu/bert_output/lb_unseen_256/ \
+--data_prefix 'uc' \
+--data_postfix 'unseen' \
+--retrieval_augmentation  \
+--training_data output_uc_0.txt
 
 # PYTHONPATH=../ CUDA_VISIBLE_DEVICES=0 python bert_t5.py \
 # --task_name mooc \

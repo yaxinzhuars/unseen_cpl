@@ -1679,9 +1679,11 @@ def main():
         best_acc, model = train(model, optimizer, scheduler, src_train_features, eval_features, best_acc, processor, tokenizer, args)
 
 
-    model = BertForSequenceClassificationBCE.from_pretrained(args.bert_model, 
-            cache_dir=PYTORCH_PRETRAINED_BERT_CACHE / 'distributed_{}'.format(
-                args.local_rank), num_labels=num_labels)
+    model_state_dict = torch.load(args.output_model_file)
+    model = BertForSequenceClassificationBCE.from_pretrained(args.bert_model, state_dict=model_state_dict, num_labels=num_labels)
+    # model = BertForSequenceClassificationBCE.from_pretrained(args.bert_model, 
+    #         cache_dir=PYTORCH_PRETRAINED_BERT_CACHE / 'distributed_{}'.format(
+    #             args.local_rank), num_labels=num_labels)
     model.to(device)
 
     if args.do_eval and (args.local_rank == -1 or torch.distributed.get_rank() == 0):
