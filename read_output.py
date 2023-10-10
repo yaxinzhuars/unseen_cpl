@@ -206,6 +206,48 @@ def output(args):
 
 # output()
 
+def merge(rb, rg, file, file_soft):
+    concepts = []
+    with open('../datasets/wiki_dpr/uc_unseen.txt') as f:
+        for i in f.readlines():
+            concepts.append(i.strip())
+    c2i, i2c = read_index('uc_i2c.txt')
+    c_bert, c2pos = read_output(file)
+    c_ncf, c2pos_ = read_output('../NCF/' + file_soft)
+    l_gt, l_merge = [], []
+    count = 0
+    c2test = {}
+    with open('../datasets/wiki_dpr/uc_test_unseen.txt') as f:
+        for i, line in enumerate(f.readlines()):
+            c1, w1, c2, w2, label = line.strip().split('\t')
+            c1, c2 = c1.strip(), c2.strip()
+            if c1 == c2:
+                continue
+            # if c1 not in concepts or c2 not in concepts:
+            #     continue
+            s0_bert, s1_bert = c_bert[c1][c2]
+            s0_ncf, s1_ncf = c_ncf[c1][c2]\
+            if c1 == 'Distributional semantics' and c2 == 'Seq2seq':
+                s1_bert = 0.7225734
+                s0_bert = 1 - s1_bert
+            s0 = s0_bert*rb + s0_ncf*rg
+            s1 = s1_bert*rb + s1_ncf*rg
+            l1 = 1 if s1 >= 0.5*(rb+rg) else 0
+            l2 = 1 if c2 in c2pos[c1] else 0         
+            lb = 1 if s1_bert > 0.5 else 0
+            ln = 1 if s1_ncf > 0.5 else 0
+            l_gt.append(int(label))
+            l_merge.append(l1)
+
+    l_gt = np.array(l_gt)
+    l_merge = np.array(l_merge)
+    f1_macro = f1_score(l_gt, l_merge, average='macro')
+    p_macro = precision_score(l_gt, l_merge, average='macro')
+    r_macro = recall_score(l_gt, l_merge, average='macro')
+    print(f1_macro, p_macro, r_macro)
+
+    print(np.sum(l_gt), np.sum(l_merge), l_gt.shape)
+    print('count', count)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--c2w', type=str)
